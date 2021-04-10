@@ -1,4 +1,4 @@
-package be.cyimena.airbnbmessengerservice.exceptions;
+package be.cyimena.airbnb.messengerservice.exceptions;
 
 public class MessageNotFoundException extends RuntimeException {
     public MessageNotFoundException(Integer id) {

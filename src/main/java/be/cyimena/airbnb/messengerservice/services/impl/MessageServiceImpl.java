@@ -1,7 +1,7 @@
-package be.cyimena.airbnbmessengerservice.services.impl;
+package be.cyimena.airbnb.messengerservice.services.impl;
 
-import be.cyimena.airbnbmessengerservice.models.Message;
-import be.cyimena.airbnbmessengerservice.services.IMessageService;
+import be.cyimena.airbnb.messengerservice.models.Message;
+import be.cyimena.airbnb.messengerservice.services.IMessageService;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package be.cyimena.airbnbmessengerservice;
+package be.cyimena.airbnb.messengerservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
