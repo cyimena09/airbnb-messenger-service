@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping(path = "/api/v1")
+@RequestMapping(path = "/api/v1/messenger")
 public class ConversationController {
 
     @Autowired
