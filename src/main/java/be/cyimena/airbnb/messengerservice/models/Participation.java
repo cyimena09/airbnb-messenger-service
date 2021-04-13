@@ -1,11 +1,8 @@
 package be.cyimena.airbnb.messengerservice.models;
 
-import be.cyimena.airbnb.assetsservice.models.Comment;
-import be.cyimena.airbnb.assetsservice.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "participations")
@@ -18,10 +15,11 @@ public class Participation {
     @Column(name = "participation_id", updatable = false, nullable = false)
     private Integer id;
 
-    private Integer userId;
+    private Integer participantId; // id du participant
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
+    @JsonIgnore
     private Conversation conversation;
 
     // METHODS
@@ -34,12 +32,12 @@ public class Participation {
         this.id = id;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getParticipantId() {
+        return participantId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setParticipantId(Integer participantId) {
+        this.participantId = participantId;
     }
 
     public Conversation getConversation() {

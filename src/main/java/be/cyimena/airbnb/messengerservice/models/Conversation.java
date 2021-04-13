@@ -1,13 +1,9 @@
 package be.cyimena.airbnb.messengerservice.models;
 
-import be.cyimena.airbnb.assetsservice.models.Comment;
-import be.cyimena.airbnb.assetsservice.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,10 +17,10 @@ public class Conversation implements Serializable {
     @Column(name = "conversation_id", updatable = false, nullable = false)
     private Integer id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "conversation")
     Set<Message> messages;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "conversation")
     Set<Participation> participations;
 
@@ -46,7 +42,6 @@ public class Conversation implements Serializable {
         this.messages = messages;
     }
 
-
     public Set<Participation> getParticipations() {
         return participations;
     }
@@ -54,4 +49,5 @@ public class Conversation implements Serializable {
     public void setParticipations(Set<Participation> participations) {
         this.participations = participations;
     }
+
 }

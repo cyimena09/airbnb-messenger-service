@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface IMessageService {
 
-    List<Message> getMessages();
+    Page<Message> getMessagesByConversationId(Integer id, Pageable pageable);
 
-    Page<Message> getMessageById(Integer messageId, Pageable pageable);
+    Page<Message> getMessagesByParticipations(List<Integer> participantsIds, Pageable pageable);
 
-    Message addMessage(Message message, Integer conversationId);
+    Message addMessage( Message message);
 
     Message updateMessage(Integer conversationId, Message message);
 

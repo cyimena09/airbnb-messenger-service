@@ -1,6 +1,5 @@
 package be.cyimena.airbnb.messengerservice.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -32,11 +31,9 @@ public class Message implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
-    @JsonIgnore
     private Conversation conversation;
 
     // METHODS
-
 
     public Integer getId() {
         return id;

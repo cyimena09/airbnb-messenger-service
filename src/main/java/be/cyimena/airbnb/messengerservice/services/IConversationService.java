@@ -1,13 +1,15 @@
 package be.cyimena.airbnb.messengerservice.services;
 
 import be.cyimena.airbnb.messengerservice.models.Conversation;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IConversationService {
 
-    List<Conversation> getConversationsByUserId();
+    Conversation getConversationById(Integer id);
 
-    Conversation getConversationById();
+    Page<Conversation> getConversationsByParticipantId(Integer id, Pageable pageable);
+
+    Conversation createConversation(Conversation conversation);
 
 }

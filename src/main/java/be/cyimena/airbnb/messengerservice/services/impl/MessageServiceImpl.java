@@ -5,61 +5,84 @@ import be.cyimena.airbnb.messengerservice.models.Message;
 import be.cyimena.airbnb.messengerservice.models.Participation;
 import be.cyimena.airbnb.messengerservice.repositories.ConversationRepository;
 import be.cyimena.airbnb.messengerservice.repositories.MessageRepository;
-import be.cyimena.airbnb.messengerservice.repositories.ParticipationRepository;
+import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
+import be.cyimena.airbnb.messengerservice.services.IParticipationService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class MessageServiceImpl implements IMessageService {
 
     private final MessageRepository messageRepository;
     private final ConversationRepository conversationRepository;
-    private final ParticipationRepository participationRepository;
+    private final IParticipationService participationService;
+    private final IConversationService conversationService;
 
-    public MessageServiceImpl(MessageRepository messageRepository, ConversationRepository conversationRepository, ParticipationRepository participationRepository) {
+    // todo UTILISER UNIQUEMENT LES SERVICES
+    public MessageServiceImpl(
+            MessageRepository messageRepository,
+            ConversationRepository conversationRepository,
+            IParticipationService participationService,
+            IConversationService conversationService) {
+
         this.messageRepository = messageRepository;
         this.conversationRepository = conversationRepository;
-        this.participationRepository = participationRepository;
+        this.conversationService = conversationService;
+        this.participationService = participationService;
     }
 
     @Override
-    public List<Message> getMessages() {
-        return null;
+    public Page<Message> getMessagesByConversationId(Integer id, Pageable pageable) {
+        if (messageRepository.findByConversationId(id, pageable).isEmpty()) {
+            return null;
+        } else {
+            return messageRepository.findByConversationId(id, pageable);
+        }
+    }
+
+    public Page<Message> getMessagesByParticipations(List<Integer> participantsIds, Pageable pageable) {
+        // On récupère l'id de la conversation en effectuant une requete qui match avec les participations fournie.
+        Integer conversationid = this.conversationRepository.findConversationIdByParticipations(participantsIds);
+        return this.getMessagesByConversationId(conversationid, pageable);
     }
 
     @Override
-    public Page<Message> getMessageById(Integer id, Pageable pageable) {
-        return messageRepository.findByConversationId(id, pageable);
-    }
+    public Message addMessage(Message message) throws ServiceException {
+        Integer conversationId;
+        // todo vérifier qu'il existe une liste de participant
 
-    @Override
-    public Message addMessage(Message message, Integer conversationId) {
-        // Todo créer des services et ajouter des exceptions
-        Conversation conversation = new Conversation();
+        // --------------------------------------------------------------------------
+        // 1. Si la conversation est nulle, on crée une nouvelle conversation et on ajoute les deux premiers participations
+        // --------------------------------------------------------------------------
 
-        // 1. Cas ou la conversation n'existe pas => on crée une nouvelle conversation et une nouvelle participation
-        if (conversationId == null) {
-            // On crée une nouvelle conversation
+        if (message.getConversation() == null || message.getConversation().getId() == null) {
+            Conversation conversation = new Conversation();
             conversation = this.conversationRepository.save(conversation);
+            conversationId = conversation.getId();
+            Set<Participation> liste = message.getConversation().getParticipations();
 
-            // On crée la participation
-            Participation participation = new Participation();
-            participation.setUserId(message.getSenderId());
-            participation.setConversation(conversation);
-            this.participationRepository.save(participation);
+            for (Participation p : liste) {
+                p.setConversation(conversation);
+                this.participationService.createParticipation(p);
+            }
+        } else {
+            conversationId = message.getConversation().getId();
         }
-        // 2. Ca ou la conversation existe
-        else {
-            conversation.setId(conversationId);
-        }
-        // On ajoute la nouvelle conversation au message avant de l'enregistrer
+
+        // --------------------------------------------------------------------------
+        // 2. Dans tous les cas on enregistre le message soit dans une conversation existante ou dans une nouvelle
+        // --------------------------------------------------------------------------
+
+        Conversation conversation = this.conversationService.getConversationById(conversationId);
         message.setConversation(conversation);
-        // 3. On enregistre le message en fonction de l'id de la conversation
-        return this.messageRepository.save(message);
+
+        return messageRepository.save(message);
     }
 
     @Override
