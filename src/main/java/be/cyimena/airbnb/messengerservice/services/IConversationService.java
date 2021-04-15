@@ -1,15 +1,17 @@
 package be.cyimena.airbnb.messengerservice.services;
 
 import be.cyimena.airbnb.messengerservice.models.Conversation;
+import be.cyimena.airbnb.messengerservice.models.ConversationDto;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IConversationService {
 
-    Conversation getConversationById(Integer id);
+    ConversationDto getConversationById(Integer id) throws ServiceException;
 
-    Page<Conversation> getConversationsByParticipantId(Integer id, Pageable pageable);
+    Page<ConversationDto> getConversationsByParticipantId(Integer id, Pageable pageable) throws ServiceException;
 
-    Conversation createConversation(Conversation conversation);
+    ConversationDto createConversation(Conversation conversation) throws ServiceException;
 
 }

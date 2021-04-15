@@ -1,7 +1,9 @@
 package be.cyimena.airbnb.messengerservice.controllers;
 
 import be.cyimena.airbnb.messengerservice.models.Message;
+import be.cyimena.airbnb.messengerservice.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,21 +27,39 @@ public class MessageController {
     // METHODS
 
     @GetMapping("/messages/by/conversations/{id}")
-    public Page<Message> getMessagesByConversationId(@PathVariable Integer id, Pageable pageable) {
-        return this.messageService.getMessagesByConversationId(id, pageable);
+    public ResponseEntity<Page<MessageDto>> getMessagesByConversationId(@PathVariable Integer id, Pageable pageable) {
+        try {
+            Page<MessageDto> messages =  this.messageService.getMessagesByConversationId(id, pageable);
+
+            if (messages == null) {
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(messages, HttpStatus.OK);
+            }
+        } catch (ServiceException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
-    // Méthode utilisé lorsqu'on ne connait pas l'id de la conversation mais qu'on dispose de l'id du/des participant(s)
+    // Méthode utilisée lorsqu'on ne connait pas l'id de la conversation mais qu'on dispose de l'id du/des participant(s)
     @GetMapping("/messages/by/participations")
-    public Page<Message> getMessagesByParticipations(
+    public ResponseEntity<Page<MessageDto>> getMessagesByParticipations(
             @RequestParam(value = "participantsIds") List<Integer> participantsIds, Pageable pageable) {
 
-        return this.messageService.getMessagesByParticipations(participantsIds, pageable);
+        try {
+            return new ResponseEntity<>(this.messageService.getMessagesByParticipations(participantsIds, pageable), HttpStatus.OK);
+        } catch (ServiceException e)  {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<Message> addMessage(@RequestBody Message message) {
-        return new ResponseEntity<>(messageService.addMessage(message), HttpStatus.OK);
+    public ResponseEntity<MessageDto> addMessage(@RequestBody Message message) {
+        try {
+            return new ResponseEntity<>(messageService.addMessage(message), HttpStatus.CREATED);
+        } catch (ServiceException e) {
+            return new ResponseEntity<>(messageService.addMessage(message), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

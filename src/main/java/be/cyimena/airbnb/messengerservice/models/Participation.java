@@ -1,11 +1,12 @@
 package be.cyimena.airbnb.messengerservice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "participations")
+@Table(name = "participations", uniqueConstraints={@UniqueConstraint(columnNames = {"participantId" , "conversation_id"})})
 public class Participation {
 
     // ATTRIBUTES
@@ -15,11 +16,13 @@ public class Participation {
     @Column(name = "participation_id", updatable = false, nullable = false)
     private Integer id;
 
-    private Integer participantId; // id du participant
+    @NotNull
+    private Integer participantId;
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     @JsonIgnore
+    @NotNull
     private Conversation conversation;
 
     // METHODS
