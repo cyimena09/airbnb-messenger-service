@@ -1,7 +1,7 @@
-package be.cyimena.airbnb.messengerservice.controllers;
+package be.cyimena.airbnb.messengerservice.web.controllers;
 
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
-import be.cyimena.airbnb.messengerservice.models.ConversationDto;
+import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;

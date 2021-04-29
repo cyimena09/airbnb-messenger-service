@@ -1,6 +1,6 @@
 package be.cyimena.airbnb.messengerservice.repositories;
 
-import be.cyimena.airbnb.messengerservice.models.Message;
+import be.cyimena.airbnb.messengerservice.domain.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

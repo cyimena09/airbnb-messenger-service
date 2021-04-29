@@ -1,6 +1,6 @@
 package be.cyimena.airbnb.messengerservice.services;
 
-import be.cyimena.airbnb.messengerservice.models.Participation;
+import be.cyimena.airbnb.messengerservice.domain.Participation;
 import org.hibernate.service.spi.ServiceException;
 
 public interface IParticipationService {

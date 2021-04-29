@@ -1,7 +1,7 @@
 package be.cyimena.airbnb.messengerservice.mappers;
 
-import be.cyimena.airbnb.messengerservice.models.Conversation;
-import be.cyimena.airbnb.messengerservice.models.ConversationDto;
+import be.cyimena.airbnb.messengerservice.domain.Conversation;
+import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;

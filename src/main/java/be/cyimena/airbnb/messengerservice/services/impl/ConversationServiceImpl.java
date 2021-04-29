@@ -2,8 +2,8 @@ package be.cyimena.airbnb.messengerservice.services.impl;
 
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
 import be.cyimena.airbnb.messengerservice.mappers.IConversationMapper;
-import be.cyimena.airbnb.messengerservice.models.Conversation;
-import be.cyimena.airbnb.messengerservice.models.ConversationDto;
+import be.cyimena.airbnb.messengerservice.domain.Conversation;
+import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import be.cyimena.airbnb.messengerservice.repositories.ConversationRepository;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import org.hibernate.service.spi.ServiceException;

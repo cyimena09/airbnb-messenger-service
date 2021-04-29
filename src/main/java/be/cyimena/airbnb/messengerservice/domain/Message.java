@@ -1,18 +1,39 @@
-package be.cyimena.airbnb.messengerservice.models;
+package be.cyimena.airbnb.messengerservice.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class MessageDto {
+@Entity
+@Table(name = "messages")
+public class Message implements Serializable {
 
     // ATTRIBUTES
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "message_id", updatable = false, nullable = false)
     private Integer id;
+
     private String text;
+
     private Integer senderId;
+
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
     private Timestamp createAt;
+
+    @UpdateTimestamp
     private Timestamp updateAt;
+
     private boolean swDisplay;
-    private ConversationDto conversationDto;
+
+    @ManyToOne
+    @JoinColumn(name = "conversation_id")
+    private Conversation conversation;
 
     // METHODS
 
@@ -31,6 +52,7 @@ public class MessageDto {
     public void setText(String text) {
         this.text = text;
     }
+
 
     public Integer getSenderId() {
         return senderId;
@@ -64,12 +86,12 @@ public class MessageDto {
         this.swDisplay = swDisplay;
     }
 
-    public ConversationDto getConversationDto() {
-        return conversationDto;
+    public Conversation getConversation() {
+        return conversation;
     }
 
-    public void setConversationDto(ConversationDto conversationDto) {
-        this.conversationDto = conversationDto;
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
     }
 
 }

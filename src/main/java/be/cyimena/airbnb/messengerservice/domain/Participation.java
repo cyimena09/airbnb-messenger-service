@@ -1,4 +1,4 @@
-package be.cyimena.airbnb.messengerservice.models;
+package be.cyimena.airbnb.messengerservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;

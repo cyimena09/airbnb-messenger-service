@@ -1,4 +1,4 @@
-package be.cyimena.airbnb.messengerservice.models;
+package be.cyimena.airbnb.messengerservice.web.models;
 
 import java.util.Set;
 
@@ -11,7 +11,6 @@ public class ConversationDto {
     Set<ParticipationDto> participationsDto;
 
     // METHODS
-
 
     public Integer getId() {
         return id;

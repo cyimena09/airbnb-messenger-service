@@ -1,6 +1,6 @@
-package be.cyimena.airbnb.messengerservice.controllers;
+package be.cyimena.airbnb.messengerservice.web.controllers;
 
-import be.cyimena.airbnb.messengerservice.models.Participation;
+import be.cyimena.airbnb.messengerservice.domain.Participation;
 import be.cyimena.airbnb.messengerservice.repositories.ParticipationRepository;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;

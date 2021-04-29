@@ -1,9 +1,7 @@
 package be.cyimena.airbnb.messengerservice.mappers;
 
-import java.util.List;
-
-import be.cyimena.airbnb.messengerservice.models.Message;
-import be.cyimena.airbnb.messengerservice.models.MessageDto;
+import be.cyimena.airbnb.messengerservice.domain.Message;
+import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;

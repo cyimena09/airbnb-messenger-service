@@ -1,7 +1,6 @@
 package be.cyimena.airbnb.messengerservice.repositories;
 
-import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
-import be.cyimena.airbnb.messengerservice.models.Conversation;
+import be.cyimena.airbnb.messengerservice.domain.Conversation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

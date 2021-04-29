@@ -1,7 +1,7 @@
 package be.cyimena.airbnb.messengerservice.services;
 
-import be.cyimena.airbnb.messengerservice.models.Message;
-import be.cyimena.airbnb.messengerservice.models.MessageDto;
+import be.cyimena.airbnb.messengerservice.domain.Message;
+import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

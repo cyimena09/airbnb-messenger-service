@@ -1,4 +1,4 @@
-package be.cyimena.airbnb.messengerservice.models;
+package be.cyimena.airbnb.messengerservice.web.models;
 
 public class ParticipationDto {
 
