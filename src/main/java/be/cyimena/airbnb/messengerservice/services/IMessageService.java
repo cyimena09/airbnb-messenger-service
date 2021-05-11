@@ -12,11 +12,11 @@ public interface IMessageService {
 
     Page<MessageDto> getMessagesByConversationId(Integer id, Pageable pageable) throws ServiceException;
 
-    Page<MessageDto> getMessagesByParticipations(List<Integer> participantsIds, Pageable pageable) throws ServiceException;
+    Page<MessageDto> getMessagesByParticipationsIds(List<Integer> participantsIds, Pageable pageable) throws ServiceException;
 
-    MessageDto addMessage(Message message) throws ServiceException;
+    void addMessage(Message message) throws ServiceException;
 
-    MessageDto updateMessage(Integer conversationId, Message message) throws ServiceException;
+    void updateMessage(Integer conversationId, Message message) throws ServiceException;
 
     void deleteMessage(Integer userId) throws ServiceException;
 

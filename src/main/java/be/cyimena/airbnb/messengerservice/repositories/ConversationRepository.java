@@ -18,6 +18,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
             "WHERE p.participantId IN :participantsIds " +
             "GROUP BY p.conversation.id " +
             "HAVING COUNT(p.conversation.id) = 2") // "2" uniquement lorsqu'une conversation est avec une autre personne < 2 lorsque groupe ...
-    Integer findConversationIdByParticipations(List<Integer> participantsIds) throws SQLException;
+    Integer findConversationIdByParticipantsIds(List<Integer> participantsIds) throws SQLException;
 
 }

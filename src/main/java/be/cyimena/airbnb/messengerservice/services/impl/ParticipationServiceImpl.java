@@ -1,24 +1,22 @@
 package be.cyimena.airbnb.messengerservice.services.impl;
 
-import be.cyimena.airbnb.messengerservice.domain.Participation;
+import be.cyimena.airbnb.messengerservice.mappers.IParticipationMapper;
 import be.cyimena.airbnb.messengerservice.repositories.ParticipationRepository;
 import be.cyimena.airbnb.messengerservice.services.IParticipationService;
+import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ParticipationServiceImpl implements IParticipationService {
 
-    private final ParticipationRepository participationRepository;
-
-    // CONSTRUCTORS
-
-    public ParticipationServiceImpl(ParticipationRepository participationRepository) {
-        this.participationRepository = participationRepository;
-    }
+    @Autowired
+    private ParticipationRepository participationRepository;
+    private IParticipationMapper participationMapper;
 
     @Override
-    public Participation createParticipation(Participation participation) {
-        return this.participationRepository.save(participation);
+    public void addParticipation(ParticipationDto participation) {
+        this.participationRepository.save(this.participationMapper.mapToParticipation(participation));
     }
 
 }

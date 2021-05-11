@@ -4,8 +4,6 @@ import be.cyimena.airbnb.messengerservice.domain.Conversation;
 import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
-
 
 @Mapper(uses = {IMessageMapper.class})
 public interface IConversationMapper {
@@ -14,6 +12,5 @@ public interface IConversationMapper {
 
     Conversation mapToConversation(ConversationDto source);
     ConversationDto mapToConversationDto(Conversation source);
-    Page<ConversationDto> mapToPageConversationDto(Page<Conversation> source);
 
 }

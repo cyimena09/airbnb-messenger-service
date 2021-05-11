@@ -1,9 +1,11 @@
 package be.cyimena.airbnb.messengerservice.web.controllers;
 
+import be.cyimena.airbnb.assetsservice.services.IUserService;
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
 import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import org.hibernate.service.spi.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,15 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/v1/messenger")
 public class ConversationController {
 
-    private final IConversationService conversationService;
-
-    // CONSTRUCTOR
-
-    public ConversationController(IConversationService conversationService) {
-        this.conversationService = conversationService;
-    }
-
-    // METHODS
+    @Autowired
+    private IConversationService conversationService;
 
     @GetMapping("/conversations/by/participations/{id}")
     public ResponseEntity<Page<ConversationDto>> getConversationsByParticipantId(@PathVariable Integer id, Pageable pageable) {

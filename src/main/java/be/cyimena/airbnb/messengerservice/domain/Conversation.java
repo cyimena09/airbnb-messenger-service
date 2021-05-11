@@ -1,16 +1,16 @@
 package be.cyimena.airbnb.messengerservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "conversations")
 public class Conversation implements Serializable {
-
-    // ATTRIBUTES
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,31 +23,5 @@ public class Conversation implements Serializable {
 
     @OneToMany(mappedBy = "conversation")
     Set<Participation> participations;
-
-    // METHODS
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Set<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Set<Message> messages) {
-        this.messages = messages;
-    }
-
-    public Set<Participation> getParticipations() {
-        return participations;
-    }
-
-    public void setParticipations(Set<Participation> participations) {
-        this.participations = participations;
-    }
 
 }

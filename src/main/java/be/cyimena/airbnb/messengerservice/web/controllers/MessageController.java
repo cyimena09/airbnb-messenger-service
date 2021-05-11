@@ -4,6 +4,7 @@ import be.cyimena.airbnb.messengerservice.domain.Message;
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import org.hibernate.service.spi.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,8 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/messenger")
 public class MessageController {
 
-    private final IMessageService messageService;
-
-    // CONSTRUCTOR
-
-    public MessageController(IMessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    // METHODS
+    @Autowired
+    private IMessageService messageService;
 
     @GetMapping("/messages/by/conversations/{id}")
     public ResponseEntity<Page<MessageDto>> getMessagesByConversationId(@PathVariable Integer id, Pageable pageable) {
