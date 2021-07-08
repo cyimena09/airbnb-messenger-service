@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(path = "/api/v1/messenger")
 public class ConversationController {
@@ -20,7 +22,7 @@ public class ConversationController {
     private IConversationService conversationService;
 
     @GetMapping("/conversations/by/participations/{id}")
-    public ResponseEntity<Page<ConversationDto>> getConversationsByParticipantId(@PathVariable Integer id, Pageable pageable) {
+    public ResponseEntity<Page<ConversationDto>> getConversationsByParticipantId(@PathVariable UUID id, Pageable pageable) {
 
         try {
             return new ResponseEntity<>(this.conversationService.getConversationsByParticipantId(id, pageable), HttpStatus.OK);

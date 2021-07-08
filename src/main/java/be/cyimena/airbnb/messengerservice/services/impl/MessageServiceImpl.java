@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class MessageServiceImpl implements IMessageService {
@@ -40,7 +41,7 @@ public class MessageServiceImpl implements IMessageService {
     private IParticipationMapper participationMapper;
 
     @Override
-    public Page<MessageDto> getMessagesByConversationId(Integer id, Pageable pageable) {
+    public Page<MessageDto> getMessagesByConversationId(UUID id, Pageable pageable) {
         Page<Message> messages;
         try {
             messages = messageRepository.findMessagesByConversationId(id, pageable);
@@ -55,14 +56,14 @@ public class MessageServiceImpl implements IMessageService {
         }
     }
 
-    public Page<MessageDto> getMessagesByParticipationsIds(List<Integer> participantsIds, Pageable pageable) {
-        Integer conversationId = this.conversationService.getConversationIdByParticipantsIds(participantsIds);
+    public Page<MessageDto> getMessagesByParticipationsIds(List<UUID> participantsIds, Pageable pageable) {
+        UUID conversationId = this.conversationService.getConversationIdByParticipantsIds(participantsIds);
         return this.getMessagesByConversationId(conversationId, pageable);
     }
 
     @Override
     public void addMessage(Message message) throws ServiceException {
-        Integer conversationId;
+        UUID conversationId;
         // todo vérifier qu'il existe une liste de participant
 
         // --------------------------------------------------------------------------
@@ -97,11 +98,11 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Override
-    public void updateMessage(Integer conversationId, Message message) {
+    public void updateMessage(UUID conversationId, Message message) {
     }
 
     @Override
-    public void deleteMessage(Integer userId) {
+    public void deleteMessage(UUID userId) {
 
     }
 

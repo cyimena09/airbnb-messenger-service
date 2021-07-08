@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ConversationServiceImpl implements IConversationService {
@@ -24,7 +25,7 @@ public class ConversationServiceImpl implements IConversationService {
     private IConversationMapper conversationMapper;
 
     @Override
-    public ConversationDto getConversationById(Integer id) {
+    public ConversationDto getConversationById(UUID id) {
         try {
             return conversationMapper.INSTANCE.mapToConversationDto(conversationRepository.findById(id).orElseThrow(() -> {
                 throw new ConversationNotFoundException(id);
@@ -44,7 +45,7 @@ public class ConversationServiceImpl implements IConversationService {
      * @return retourne une liste de conversation
      */
     @Override
-    public Page<ConversationDto> getConversationsByParticipantId(Integer id, Pageable pageable) {
+    public Page<ConversationDto> getConversationsByParticipantId(UUID id, Pageable pageable) {
         try {
             return this.conversationRepository.findConversationsByParticipantId(id, pageable).map(conversationMapper.INSTANCE::mapToConversationDto);
 
@@ -54,8 +55,8 @@ public class ConversationServiceImpl implements IConversationService {
     }
 
     @Override
-    public ConversationDto getConversationByParticipantsIds(List<Integer> participantsIds) {
-        Integer conversationId = this.getConversationIdByParticipantsIds(participantsIds);
+    public ConversationDto getConversationByParticipantsIds(List<UUID> participantsIds) {
+        UUID conversationId = this.getConversationIdByParticipantsIds(participantsIds);
         return this.getConversationById(conversationId);
     }
 
@@ -65,7 +66,7 @@ public class ConversationServiceImpl implements IConversationService {
      * @return
      */
     @Override
-    public Integer getConversationIdByParticipantsIds(List<Integer> ids) {
+    public UUID getConversationIdByParticipantsIds(List<UUID> ids) {
         try {
             // todo récupérer l'id de la conversation grace aux participants
             // todo récupérer la conversation en fonction de cette id

@@ -7,17 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IMessageService {
 
-    Page<MessageDto> getMessagesByConversationId(Integer id, Pageable pageable) throws ServiceException;
+    Page<MessageDto> getMessagesByConversationId(UUID id, Pageable pageable) throws ServiceException;
 
-    Page<MessageDto> getMessagesByParticipationsIds(List<Integer> participantsIds, Pageable pageable) throws ServiceException;
+    Page<MessageDto> getMessagesByParticipationsIds(List<UUID> participantsIds, Pageable pageable) throws ServiceException;
 
     void addMessage(Message message) throws ServiceException;
 
-    void updateMessage(Integer conversationId, Message message) throws ServiceException;
+    void updateMessage(UUID conversationId, Message message) throws ServiceException;
 
-    void deleteMessage(Integer userId) throws ServiceException;
+    void deleteMessage(UUID userId) throws ServiceException;
 
 }

@@ -7,16 +7,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IConversationService {
 
-    ConversationDto getConversationById(Integer id) throws ServiceException;
+    ConversationDto getConversationById(UUID id) throws ServiceException;
 
-    Page<ConversationDto> getConversationsByParticipantId(Integer id, Pageable pageable) throws ServiceException;
+    Page<ConversationDto> getConversationsByParticipantId(UUID id, Pageable pageable) throws ServiceException;
 
-    Integer getConversationIdByParticipantsIds(List<Integer> ids);
+    UUID getConversationIdByParticipantsIds(List<UUID> ids);
 
-    ConversationDto getConversationByParticipantsIds(List<Integer> participantsIds);
+    ConversationDto getConversationByParticipantsIds(List<UUID> participantsIds);
 
     ConversationDto createConversation(Conversation conversation) throws ServiceException;
 
