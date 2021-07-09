@@ -15,9 +15,9 @@ public interface IMessageService {
 
     Page<MessageDto> getMessagesByParticipationsIds(List<UUID> participantsIds, Pageable pageable) throws ServiceException;
 
-    void addMessage(Message message) throws ServiceException;
+    void addMessage(MessageDto message) throws ServiceException;
 
-    void updateMessage(UUID conversationId, Message message) throws ServiceException;
+    void updateMessage(UUID conversationId, MessageDto message) throws ServiceException;
 
     void deleteMessage(UUID userId) throws ServiceException;
 

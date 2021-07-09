@@ -1,6 +1,5 @@
 package be.cyimena.airbnb.messengerservice.web.controllers;
 
-import be.cyimena.airbnb.assetsservice.services.IUserService;
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
 import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
@@ -23,7 +22,6 @@ public class ConversationController {
 
     @GetMapping("/conversations/by/participations/{id}")
     public ResponseEntity<Page<ConversationDto>> getConversationsByParticipantId(@PathVariable UUID id, Pageable pageable) {
-
         try {
             return new ResponseEntity<>(this.conversationService.getConversationsByParticipantId(id, pageable), HttpStatus.OK);
         } catch (ConversationNotFoundException e) {

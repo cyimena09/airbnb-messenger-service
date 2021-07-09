@@ -60,10 +60,12 @@ public class MessageController {
 
     @PostMapping("/messages")
     public void createMessage(@RequestBody MessageDto message) {
-
         try {
+            // save message
+            this.messageService.addMessage(message);
+            // notify receiver(s)
             String WEB_SOCKET_URL = "/queue/messages";
-            messagingTemplate.convertAndSendToUser(message.getReceiverId().toString(), WEB_SOCKET_URL, message.getText());
+            this.messagingTemplate.convertAndSendToUser(message.getReceiverId().toString(), WEB_SOCKET_URL, message);
         } catch (Exception e) {
             e.printStackTrace();
         }

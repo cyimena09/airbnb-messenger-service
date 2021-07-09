@@ -3,6 +3,7 @@ package be.cyimena.airbnb.messengerservice.domain;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -17,8 +18,9 @@ import java.util.UUID;
 public class Message implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id", updatable = false, nullable = false)
+    @GeneratedValue(generator = "UUID")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    @Column(name = "message_id", length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     private String text;

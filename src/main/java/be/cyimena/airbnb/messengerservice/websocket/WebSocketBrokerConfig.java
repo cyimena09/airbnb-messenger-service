@@ -41,4 +41,5 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
         messageConverters.add(converter);
         return false;
     }
+
 }

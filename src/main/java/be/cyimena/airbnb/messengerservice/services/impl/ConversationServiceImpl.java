@@ -30,7 +30,6 @@ public class ConversationServiceImpl implements IConversationService {
             return conversationMapper.INSTANCE.mapToConversationDto(conversationRepository.findById(id).orElseThrow(() -> {
                 throw new ConversationNotFoundException(id);
             }));
-
         } catch (ConversationNotFoundException e) {
             throw new ServiceException(e.getMessage());
         } catch (ServiceException e) {
@@ -40,7 +39,8 @@ public class ConversationServiceImpl implements IConversationService {
 
     /**
      * Récupère toutes les conversations d'un utilisateur ou d'un participant
-     * @param id identifiant de l'utilisateur
+     *
+     * @param id       identifiant de l'utilisateur
      * @param pageable mise en page
      * @return retourne une liste de conversation
      */
@@ -48,7 +48,6 @@ public class ConversationServiceImpl implements IConversationService {
     public Page<ConversationDto> getConversationsByParticipantId(UUID id, Pageable pageable) {
         try {
             return this.conversationRepository.findConversationsByParticipantId(id, pageable).map(conversationMapper.INSTANCE::mapToConversationDto);
-
         } catch (SQLException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -62,6 +61,7 @@ public class ConversationServiceImpl implements IConversationService {
 
     /**
      * Récupère la conversation dans laquelle ont participé tous les utlisateurs
+     *
      * @param ids identifiants des utilisateurs
      * @return
      */
@@ -77,9 +77,10 @@ public class ConversationServiceImpl implements IConversationService {
     }
 
     @Override
-    public ConversationDto createConversation(Conversation conversation) {
+    public ConversationDto createConversation(ConversationDto conversationDto) {
         try {
-            return this.conversationMapper.mapToConversationDto(this.conversationRepository.save(conversation));
+            Conversation conversation = this.conversationMapper.INSTANCE.mapToConversation(conversationDto);
+            return this.conversationMapper.INSTANCE.mapToConversationDto(this.conversationRepository.save(conversation));
         } catch (ServiceException e) {
             throw new ServiceException(CONVERSATION_ERROR);
         }

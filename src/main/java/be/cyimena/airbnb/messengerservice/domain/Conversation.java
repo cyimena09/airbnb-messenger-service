@@ -2,6 +2,7 @@ package be.cyimena.airbnb.messengerservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,8 +15,9 @@ import java.util.UUID;
 public class Conversation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "conversation_id", updatable = false, nullable = false)
+    @GeneratedValue(generator = "UUID")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    @Column(name = "conversation_id", length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @JsonIgnore

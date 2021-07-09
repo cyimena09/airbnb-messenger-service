@@ -9,6 +9,6 @@ public class ParticipationDto {
 
     private UUID id;
     private UUID participantId;
-    private ConversationDto conversationDto;
+    private ConversationDto conversation;
 
 }

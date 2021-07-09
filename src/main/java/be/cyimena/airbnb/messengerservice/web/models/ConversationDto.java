@@ -11,7 +11,7 @@ import java.util.UUID;
 public class ConversationDto {
 
     private UUID id;
-    Set<MessageDto> messagesDto;
-    Set<ParticipationDto> participationsDto;
+    Set<MessageDto> messages;
+    Set<ParticipationDto> participations;
 
 }

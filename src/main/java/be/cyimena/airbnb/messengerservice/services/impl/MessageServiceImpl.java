@@ -14,6 +14,7 @@ import be.cyimena.airbnb.messengerservice.repositories.MessageRepository;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import be.cyimena.airbnb.messengerservice.services.IParticipationService;
+import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -62,43 +64,51 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Override
-    public void addMessage(Message message) throws ServiceException {
-        UUID conversationId;
+    public void addMessage(MessageDto messageDto) throws ServiceException {
+        // todo check if conv exist
         // todo vérifier qu'il existe une liste de participant
 
         // --------------------------------------------------------------------------
-        // 1. Si la conversation est nulle, on crée une nouvelle conversation et on ajoute les deux premiers participations
+        // 1. If the conversation is null, we create a new conversation and we add the first two participants
         // --------------------------------------------------------------------------
+        UUID conversationId;
 
-        if (message.getConversation() == null || message.getConversation().getId() == null) {
-            Conversation conversation = new Conversation();
-            conversation = this.conversationMapper.mapToConversation(this.conversationService.createConversation(conversation));
-            conversationId = conversation.getId();
-            Set<Participation> liste = message.getConversation().getParticipations();
-
-            for (Participation p : liste) {
-                p.setConversation(conversation);
-                this.participationService.addParticipation(participationMapper.mapToParticipationDto(p));
+        if (messageDto.getConversation() == null || messageDto.getConversation().getId() == null) {
+            ConversationDto conversationDto = new ConversationDto();
+            conversationDto = this.conversationService.createConversation(conversationDto);
+            conversationId = conversationDto.getId();
+            // we add the first two participants (receiver and sender)
+            ParticipationDto sender = new ParticipationDto();
+            sender.setParticipantId(messageDto.getSenderId());
+            ParticipationDto receiver = new ParticipationDto();
+            receiver.setParticipantId(messageDto.getReceiverId());
+            Set<ParticipationDto> participationsList = new HashSet<>();
+            participationsList.add(receiver);
+            participationsList.add(sender);
+            for (ParticipationDto p : participationsList) {
+                p.setConversation(conversationDto);
+                this.participationService.addParticipation(p);
             }
         } else {
-            conversationId = message.getConversation().getId();
+            conversationId = messageDto.getConversation().getId();
         }
 
         // --------------------------------------------------------------------------
-        // 2. Dans tous les cas on enregistre le message soit dans une conversation existante ou dans une nouvelle
+        // 2. In all cases, the message is recorded. Either in an existing conversation or in a new one
         // --------------------------------------------------------------------------
-
         try {
-            Conversation conversation = this.conversationMapper.mapToConversation(this.conversationService.getConversationById(conversationId));
+            Conversation conversation = new Conversation();
+            conversation.setId(conversationId);
+            Message message = this.messageMapper.INSTANCE.mapToMessage(messageDto);
             message.setConversation(conversation);
-            this.messageMapper.mapToMessageDto(messageRepository.save(message));
+            messageRepository.save(message);
         } catch (ServiceException | ConversationNotFoundException e) {
             throw new ServiceException("Impossible de sauvegarder les messages");
         }
     }
 
     @Override
-    public void updateMessage(UUID conversationId, Message message) {
+    public void updateMessage(UUID conversationId, MessageDto message) {
     }
 
     @Override

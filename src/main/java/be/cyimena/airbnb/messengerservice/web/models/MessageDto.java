@@ -9,12 +9,12 @@ import java.util.UUID;
 public class MessageDto {
 
     private UUID id;
-    private String text;
     private UUID senderId;
     private UUID receiverId;
+    private String text;
     private Timestamp createAt;
     private Timestamp updateAt;
     private boolean swDisplay;
-    private ConversationDto conversationDto;
+    private ConversationDto conversation;
 
 }

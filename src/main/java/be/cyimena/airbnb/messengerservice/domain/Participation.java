@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -14,9 +15,12 @@ import java.util.UUID;
 @Table(name = "participations", uniqueConstraints={@UniqueConstraint(columnNames = {"participantId" , "conversation_id"})})
 public class Participation {
 
+    // todo : fusionner participantId et id ?
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participation_id", updatable = false, nullable = false)
+    @GeneratedValue(generator = "UUID")
+    @Type(type="org.hibernate.type.UUIDCharType")
+    @Column(name = "participation_id", length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @NotNull

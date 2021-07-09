@@ -14,17 +14,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/stomp").permitAll() // websocket authorization
-                .antMatchers(HttpMethod.GET, "/api/v1/messenger/messages").permitAll() // todo remove
-                .antMatchers(HttpMethod.POST, "/api/v1/messenger/messages").permitAll() // todo remove
+                // messages
+                .antMatchers(HttpMethod.GET, "/api/v1/messenger/messages").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/messenger/messages").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/messenger/messages/by/conversations/{id}").permitAll()
+                // conversations
+                .antMatchers(HttpMethod.GET, "/api/v1/messenger/conversations/by/participations/{id}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/messenger/conversations/by/participations/{id}").permitAll()
                 .anyRequest().authenticated();
     }
-
 
     /**
      * Apply CORS configuration before Spring Security.
