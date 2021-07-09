@@ -8,13 +8,12 @@ import be.cyimena.airbnb.messengerservice.domain.Message;
 import be.cyimena.airbnb.messengerservice.mappers.IParticipationMapper;
 import be.cyimena.airbnb.messengerservice.web.models.ConversationDto;
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
-import be.cyimena.airbnb.messengerservice.domain.Participation;
-import be.cyimena.airbnb.messengerservice.repositories.ConversationRepository;
 import be.cyimena.airbnb.messengerservice.repositories.MessageRepository;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import be.cyimena.airbnb.messengerservice.services.IParticipationService;
 import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,9 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -64,38 +61,38 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Override
-    public void addMessage(MessageDto messageDto) throws ServiceException {
-        // todo check if conv exist
-        // todo vérifier qu'il existe une liste de participant
-
-        // --------------------------------------------------------------------------
-        // 1. If the conversation is null, we create a new conversation and we add the first two participants
-        // --------------------------------------------------------------------------
-        UUID conversationId;
-
-        if (messageDto.getConversation() == null || messageDto.getConversation().getId() == null) {
+    public void addPrivateMessage(MessageDto messageDto) throws ServiceException {
+        if (messageDto == null || messageDto.getConversation() == null || messageDto.getConversation().getParticipations() == null) {
+            return;
+        }
+        // At least two participants in a private conversation are required
+        if (messageDto.getConversation().getParticipations().size() < 2) {
+            return;
+        }
+        // If the conversation already exist
+        if (messageDto.getConversation().getId() != null && !StringUtils.isBlank(messageDto.getConversation().getId().toString())) {
+            this.addMessage(messageDto.getConversation().getId(), messageDto);
+            return;
+        }
+        // If the conversation (conversationId) is null, we create a new conversation and add participants
+        if (messageDto.getConversation().getId() == null) {
             ConversationDto conversationDto = new ConversationDto();
             conversationDto = this.conversationService.createConversation(conversationDto);
-            conversationId = conversationDto.getId();
-            // we add the first two participants (receiver and sender)
-            ParticipationDto sender = new ParticipationDto();
-            sender.setParticipantId(messageDto.getSenderId());
-            ParticipationDto receiver = new ParticipationDto();
-            receiver.setParticipantId(messageDto.getReceiverId());
-            Set<ParticipationDto> participationsList = new HashSet<>();
-            participationsList.add(receiver);
-            participationsList.add(sender);
-            for (ParticipationDto p : participationsList) {
+            for (ParticipationDto p : messageDto.getConversation().getParticipations()) {
                 p.setConversation(conversationDto);
                 this.participationService.addParticipation(p);
             }
-        } else {
-            conversationId = messageDto.getConversation().getId();
+            this.addMessage(conversationDto.getId(), messageDto);
         }
+    }
 
-        // --------------------------------------------------------------------------
-        // 2. In all cases, the message is recorded. Either in an existing conversation or in a new one
-        // --------------------------------------------------------------------------
+    /**
+     * Private method which simply recording a message.
+     *
+     * @param conversationId
+     * @param messageDto
+     */
+    private void addMessage(UUID conversationId, MessageDto messageDto) throws ServiceException {
         try {
             Conversation conversation = new Conversation();
             conversation.setId(conversationId);

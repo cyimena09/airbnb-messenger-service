@@ -10,7 +10,6 @@ public class MessageDto {
 
     private UUID id;
     private UUID senderId;
-    private UUID receiverId;
     private String text;
     private Timestamp createAt;
     private Timestamp updateAt;

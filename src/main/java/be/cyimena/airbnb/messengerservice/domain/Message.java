@@ -22,20 +22,14 @@ public class Message implements Serializable {
     @Type(type="org.hibernate.type.UUIDCharType")
     @Column(name = "message_id", length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
-
-    private String text;
-
     private UUID senderId;
-
+    private String text;
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private Timestamp createAt;
-
     @UpdateTimestamp
     private Timestamp updateAt;
-
     private boolean swDisplay;
-
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;

@@ -2,6 +2,7 @@ package be.cyimena.airbnb.messengerservice.web.controllers;
 
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
+import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,6 @@ public class MessageController {
 
     @Autowired
     private IMessageService messageService;
-
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
@@ -60,12 +60,18 @@ public class MessageController {
 
     @PostMapping("/messages")
     public void createMessage(@RequestBody MessageDto message) {
+        String WEB_SOCKET_URL = "/queue/messages";
         try {
             // save message
-            this.messageService.addMessage(message);
-            // notify receiver(s)
-            String WEB_SOCKET_URL = "/queue/messages";
-            this.messagingTemplate.convertAndSendToUser(message.getReceiverId().toString(), WEB_SOCKET_URL, message);
+            if (message != null && message.getConversation().getParticipations() != null) {
+                this.messageService.addPrivateMessage(message);
+                // we send the message to all participants except the one who created the message
+                for (ParticipationDto p : message.getConversation().getParticipations()) {
+                    if (!message.getSenderId().equals(p.getParticipantId())) {
+                        this.messagingTemplate.convertAndSendToUser(p.getParticipantId().toString(), WEB_SOCKET_URL, message);
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
