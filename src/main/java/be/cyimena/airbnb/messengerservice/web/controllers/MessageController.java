@@ -4,8 +4,8 @@ import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.service.spi.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,20 +18,17 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/v1/messenger")
+@RequiredArgsConstructor
 public class MessageController {
 
-    @Autowired
-    private IMessageService messageService;
-    @Autowired
-    private IConversationService conversationService;
-    @Autowired
-    private SimpMessageSendingOperations messagingTemplate;
+    private final IMessageService messageService;
+    private final IConversationService conversationService;
+    private final SimpMessageSendingOperations messagingTemplate;
 
     @GetMapping("/messages/by/conversations/{id}")
     public ResponseEntity<Page<MessageDto>> getMessagesByConversationId(@PathVariable UUID id, Pageable pageable) {
         try {
             Page<MessageDto> messages = this.messageService.getMessagesByConversationId(id, pageable);
-
             if (messages == null) {
                 return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
             } else {

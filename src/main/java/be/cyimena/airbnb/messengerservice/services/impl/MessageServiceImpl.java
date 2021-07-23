@@ -1,6 +1,5 @@
 package be.cyimena.airbnb.messengerservice.services.impl;
 
-import be.cyimena.airbnb.messengerservice.domain.Participation;
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
 import be.cyimena.airbnb.messengerservice.mappers.IConversationMapper;
 import be.cyimena.airbnb.messengerservice.mappers.IMessageMapper;
@@ -14,9 +13,9 @@ import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import be.cyimena.airbnb.messengerservice.services.IParticipationService;
 import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.service.spi.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,19 +24,15 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements IMessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
-    private IMessageMapper messageMapper;
-
-    @Autowired
-    private IConversationService conversationService;
-    private IConversationMapper conversationMapper;
-
-    @Autowired
-    private IParticipationService participationService;
-    private IParticipationMapper participationMapper;
+    private final MessageRepository messageRepository;
+    private final IMessageMapper messageMapper;
+    private final IConversationService conversationService;
+    private final IConversationMapper conversationMapper;
+    private final IParticipationService participationService;
+    private final IParticipationMapper participationMapper;
 
     @Override
     public Page<MessageDto> getMessagesByConversationId(UUID id, Pageable pageable) {
@@ -48,7 +43,7 @@ public class MessageServiceImpl implements IMessageService {
             if (messages.isEmpty()) {
                 return null;
             } else {
-                return messages.map(messageMapper.INSTANCE::mapToMessageDto);
+                return messages.map(messageMapper::mapToMessageDto);
             }
         } catch (SQLException e) {
             throw new ServiceException("Impossible de récupérer les messages avec la conversation " + id);
@@ -124,12 +119,12 @@ public class MessageServiceImpl implements IMessageService {
             // sauvegarde du message
             Conversation conversation = new Conversation();
             conversation.setId(conversationId);
-            Message message = this.messageMapper.INSTANCE.mapToMessage(messageDto);
+            Message message = this.messageMapper.mapToMessage(messageDto);
             message.setConversation(conversation);
             message = messageRepository.save(message);
             // renvoie du message avec sa conversation
             ConversationDto conversationSavedDto = this.conversationService.getConversationById(message.getConversation().getId());
-            MessageDto messageSavedDto = messageMapper.INSTANCE.mapToMessageDto(message);
+            MessageDto messageSavedDto = messageMapper.mapToMessageDto(message);
             messageSavedDto.setConversation(conversationSavedDto);
             return messageSavedDto;
         } catch (ServiceException | ConversationNotFoundException e) {
