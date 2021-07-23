@@ -20,6 +20,17 @@ public class ConversationController {
     @Autowired
     private IConversationService conversationService;
 
+    @GetMapping("/conversations/{id}")
+    public ResponseEntity<ConversationDto> getConversationById(@PathVariable UUID id) {
+        try {
+            return new ResponseEntity<>(this.conversationService.getConversationById(id), HttpStatus.OK);
+        } catch (ConversationNotFoundException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (ServiceException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/conversations/by/participations/{id}")
     public ResponseEntity<Page<ConversationDto>> getConversationsByParticipantId(@PathVariable UUID id, Pageable pageable) {
         try {

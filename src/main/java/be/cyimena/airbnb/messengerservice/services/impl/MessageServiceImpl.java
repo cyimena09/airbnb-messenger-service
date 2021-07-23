@@ -1,5 +1,6 @@
 package be.cyimena.airbnb.messengerservice.services.impl;
 
+import be.cyimena.airbnb.messengerservice.domain.Participation;
 import be.cyimena.airbnb.messengerservice.exceptions.ConversationNotFoundException;
 import be.cyimena.airbnb.messengerservice.mappers.IConversationMapper;
 import be.cyimena.airbnb.messengerservice.mappers.IMessageMapper;
@@ -21,8 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class MessageServiceImpl implements IMessageService {
@@ -55,50 +55,83 @@ public class MessageServiceImpl implements IMessageService {
         }
     }
 
-    public Page<MessageDto> getMessagesByParticipationsIds(List<UUID> participantsIds, Pageable pageable) {
-        UUID conversationId = this.conversationService.getConversationIdByParticipantsIds(participantsIds);
-        return this.getMessagesByConversationId(conversationId, pageable);
+    public Page<MessageDto> getMessagesByParticipations(Set<ParticipationDto> participations, Pageable pageable) {
+        ConversationDto conversation = this.getMatchingConv(participations);
+
+        if (conversation != null) {
+            return this.getMessagesByConversationId(conversation.getId(), pageable);
+        } else {
+            return null;
+        }
     }
 
     @Override
-    public void addPrivateMessage(MessageDto messageDto) throws ServiceException {
+    public MessageDto addPrivateMessage(MessageDto messageDto) throws ServiceException {
+        // todo return exception
         if (messageDto == null || messageDto.getConversation() == null || messageDto.getConversation().getParticipations() == null) {
-            return;
-        }
-        // At least two participants in a private conversation are required
-        if (messageDto.getConversation().getParticipations().size() < 2) {
-            return;
+            return null;
         }
         // If the conversation already exist
         if (messageDto.getConversation().getId() != null && !StringUtils.isBlank(messageDto.getConversation().getId().toString())) {
-            this.addMessage(messageDto.getConversation().getId(), messageDto);
-            return;
+            // todo find conversation
+            return this.addMessage(messageDto.getConversation().getId(), messageDto);
         }
-        // If the conversation (conversationId) is null, we create a new conversation and add participants
+        // If the conversation (conversationId) is null,
         if (messageDto.getConversation().getId() == null) {
-            ConversationDto conversationDto = new ConversationDto();
-            conversationDto = this.conversationService.createConversation(conversationDto);
-            for (ParticipationDto p : messageDto.getConversation().getParticipations()) {
-                p.setConversation(conversationDto);
-                this.participationService.addParticipation(p);
+            // First we try to find a matching conversation with two users supplied
+            ConversationDto conversationDto = this.getMatchingConv(messageDto.getConversation().getParticipations());
+            if (conversationDto == null) {
+                // If no match we create a new conversation and add participants
+                conversationDto = new ConversationDto();
+                conversationDto = this.conversationService.createConversation(conversationDto);
+                for (ParticipationDto p : messageDto.getConversation().getParticipations()) {
+                    p.setConversation(conversationDto);
+                    this.participationService.addParticipation(p);
+                }
             }
-            this.addMessage(conversationDto.getId(), messageDto);
+            Set<ParticipationDto> savedParticipation = this.participationService.getParticipationsByConversationId(conversationDto.getId(), Pageable.unpaged()).toSet();
+            MessageDto savedMessage = this.addMessage(conversationDto.getId(), messageDto);
+            savedMessage.getConversation().setParticipations(savedParticipation);
+
+            return savedMessage;
         }
+        return null;
+    }
+
+    public ConversationDto getMatchingConv(Set<ParticipationDto> participations) {
+        ParticipationDto firstParticipation = participations.stream().findFirst().get();
+        ParticipationDto secondParticipation = participations.stream().skip(1).findFirst().get();
+        List<ConversationDto> conversationsInDb = this.conversationService.getConversationsByParticipantId(firstParticipation.getParticipantId(), Pageable.unpaged()).toList();
+
+        for (ConversationDto conversationInDb : conversationsInDb) {
+            for (ParticipationDto participationInDb : conversationInDb.getParticipations()) {
+                if (participationInDb.getParticipantId().equals(secondParticipation.getParticipantId())) {
+                    return conversationInDb;
+                }
+            }
+        }
+        return null;
     }
 
     /**
-     * Private method which simply recording a message.
+     * Private method which simply save a message.
      *
      * @param conversationId
      * @param messageDto
      */
-    private void addMessage(UUID conversationId, MessageDto messageDto) throws ServiceException {
+    private MessageDto addMessage(UUID conversationId, MessageDto messageDto) throws ServiceException {
         try {
+            // sauvegarde du message
             Conversation conversation = new Conversation();
             conversation.setId(conversationId);
             Message message = this.messageMapper.INSTANCE.mapToMessage(messageDto);
             message.setConversation(conversation);
-            messageRepository.save(message);
+            message = messageRepository.save(message);
+            // renvoie du message avec sa conversation
+            ConversationDto conversationSavedDto = this.conversationService.getConversationById(message.getConversation().getId());
+            MessageDto messageSavedDto = messageMapper.INSTANCE.mapToMessageDto(message);
+            messageSavedDto.setConversation(conversationSavedDto);
+            return messageSavedDto;
         } catch (ServiceException | ConversationNotFoundException e) {
             throw new ServiceException("Impossible de sauvegarder les messages");
         }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Table(name = "participations", uniqueConstraints={@UniqueConstraint(columnNames = {"participantId" , "conversation_id"})})
+@Table(name = "participations", uniqueConstraints={@UniqueConstraint(columnNames = {"participant_id" , "conversation_id"})})
 public class Participation {
 
     // todo : fusionner participantId et id ?
@@ -24,12 +24,12 @@ public class Participation {
     private UUID id;
 
     @NotNull
+    @Column(name = "participant_id")
     private UUID participantId;
 
     @ManyToOne
-    @JoinColumn(name = "conversation_id")
+    @JoinColumn(name = "conversation_id", nullable = false)
     @JsonIgnore
-    @NotNull
     private Conversation conversation;
 
 }

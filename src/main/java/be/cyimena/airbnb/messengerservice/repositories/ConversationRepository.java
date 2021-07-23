@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -17,10 +16,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
     @Query("SELECT c FROM Conversation c INNER JOIN Participation p ON p.conversation.id = c.id WHERE p.participantId = :id")
     Page<Conversation> findConversationsByParticipantId(UUID id, Pageable pageable) throws SQLException;
 
-    @Query("SELECT p.conversation.id FROM Participation p " +
-            "WHERE p.participantId IN :participantsIds " +
-            "GROUP BY p.conversation.id " +
-            "HAVING COUNT(p.conversation.id) = 2") // "2" uniquement lorsqu'une conversation est avec une autre personne < 2 lorsque groupe ...
-    UUID findConversationIdByParticipantsIds(List<UUID> participantsIds) throws SQLException;
+    @Query("SELECT c FROM Conversation c INNER JOIN Participation p ON p.conversation.id = c.id WHERE c.id = :id")
+    Conversation findByConversationId(UUID id);
 
 }
