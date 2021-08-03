@@ -1,6 +1,10 @@
 package be.cyimena.airbnb.messengerservice.web.controllers;
 
+import be.cyimena.airbnb.messengerservice.domain.Notification;
+import be.cyimena.airbnb.messengerservice.domain.NotificationType;
+import be.cyimena.airbnb.messengerservice.enumerations.TypeEnum;
 import be.cyimena.airbnb.messengerservice.services.IConversationService;
+import be.cyimena.airbnb.messengerservice.services.INotificationService;
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
 import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
@@ -23,6 +27,7 @@ public class MessageController {
 
     private final IMessageService messageService;
     private final IConversationService conversationService;
+    private final INotificationService notificationService;
     private final SimpMessageSendingOperations messagingTemplate;
 
     @GetMapping("/messages/by/conversations/{id}")
@@ -39,12 +44,18 @@ public class MessageController {
         }
     }
 
+    @GetMapping("/messages/by/participations/{id}")
+    public Page<MessageDto> getMessagesByParticipantId(@PathVariable UUID id, Pageable pageable) {
+        return this.messageService.getMessagesByParticipantId(id, pageable);
+
+    }
+
     /**
      * Method used when you do not know the ID of the conversation but have the ID of the participant (s)
      *
-     * @param participations
-     * @param pageable
-     * @return
+     * @param participations list of participants
+     * @param pageable pageable
+     * @return page of messageDto
      */
     @PostMapping("/messages/by/participations")
     public ResponseEntity<Page<MessageDto>> getMessagesByParticipations(@RequestBody Set<ParticipationDto> participations, Pageable pageable) {
@@ -60,14 +71,22 @@ public class MessageController {
         String WEB_SOCKET_URL = "/queue/messages";
         MessageDto messageDto;
         try {
-            // save message
             if (message != null && message.getConversation() != null) {
                 if (message.getConversation().getId() != null || message.getConversation().getParticipations() != null) {
                     messageDto = this.messageService.addPrivateMessage(message);
-                    // we send the message to all participants except the one who created the message
+                    // we send the message and notification to all participants except the one who created the message
                     for (ParticipationDto p : messageDto.getConversation().getParticipations()) {
                         if (!messageDto.getSenderId().equals(p.getParticipantId())) {
+                            // send message with websocket
                             this.messagingTemplate.convertAndSendToUser(p.getParticipantId().toString(), WEB_SOCKET_URL, messageDto);
+                            // save and send notification with websocket
+                            Notification notification = new Notification();
+                            NotificationType type = new NotificationType();
+                            type.setName(TypeEnum.MESSAGE.toString());
+                            notification.setType(type);
+                            notification.setMessageId(messageDto.getId());
+                            notification.setUserId(p.getParticipantId());
+                            this.notificationService.createNotification(notification);
                         }
                     }
                     return messageDto;

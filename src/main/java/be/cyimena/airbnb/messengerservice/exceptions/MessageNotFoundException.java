@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class MessageNotFoundException extends RuntimeException {
     public MessageNotFoundException(UUID id) {
-        super("Impossible de trouver un message avec l'id : " + id);
+        super("Could not find a message with id : " + id);
     }
 }

@@ -46,13 +46,24 @@ public class MessageServiceImpl implements IMessageService {
                 return messages.map(messageMapper::mapToMessageDto);
             }
         } catch (SQLException e) {
-            throw new ServiceException("Impossible de récupérer les messages avec la conversation " + id);
+            throw new ServiceException("Unable to get messages with conversation " + id);
         }
     }
 
+    /**
+     * Get message from single participant
+     * @param id
+     * @param pageable
+     * @return
+     */
+    @Override
+    public Page<MessageDto> getMessagesByParticipantId(UUID id, Pageable pageable) {
+       return null;
+    }
+
+    @Override
     public Page<MessageDto> getMessagesByParticipations(Set<ParticipationDto> participations, Pageable pageable) {
         ConversationDto conversation = this.getMatchingConv(participations);
-
         if (conversation != null) {
             return this.getMessagesByConversationId(conversation.getId(), pageable);
         } else {
@@ -66,7 +77,7 @@ public class MessageServiceImpl implements IMessageService {
         if (messageDto == null || messageDto.getConversation() == null || messageDto.getConversation().getParticipations() == null) {
             return null;
         }
-        // If the conversation already exist
+        // If the conversation is set
         if (messageDto.getConversation().getId() != null && !StringUtils.isBlank(messageDto.getConversation().getId().toString())) {
             // todo find conversation
             return this.addMessage(messageDto.getConversation().getId(), messageDto);
@@ -93,11 +104,16 @@ public class MessageServiceImpl implements IMessageService {
         return null;
     }
 
+    /**
+     * Returns the conversation in which the users are participating.
+     *
+     * @param participations participants
+     * @return ConversationDto
+     */
     public ConversationDto getMatchingConv(Set<ParticipationDto> participations) {
         ParticipationDto firstParticipation = participations.stream().findFirst().get();
         ParticipationDto secondParticipation = participations.stream().skip(1).findFirst().get();
         List<ConversationDto> conversationsInDb = this.conversationService.getConversationsByParticipantId(firstParticipation.getParticipantId(), Pageable.unpaged()).toList();
-
         for (ConversationDto conversationInDb : conversationsInDb) {
             for (ParticipationDto participationInDb : conversationInDb.getParticipations()) {
                 if (participationInDb.getParticipantId().equals(secondParticipation.getParticipantId())) {
@@ -116,19 +132,19 @@ public class MessageServiceImpl implements IMessageService {
      */
     private MessageDto addMessage(UUID conversationId, MessageDto messageDto) throws ServiceException {
         try {
-            // sauvegarde du message
+            // save message
             Conversation conversation = new Conversation();
             conversation.setId(conversationId);
             Message message = this.messageMapper.mapToMessage(messageDto);
             message.setConversation(conversation);
             message = messageRepository.save(message);
-            // renvoie du message avec sa conversation
+            // send message with conversation
             ConversationDto conversationSavedDto = this.conversationService.getConversationById(message.getConversation().getId());
             MessageDto messageSavedDto = messageMapper.mapToMessageDto(message);
             messageSavedDto.setConversation(conversationSavedDto);
             return messageSavedDto;
         } catch (ServiceException | ConversationNotFoundException e) {
-            throw new ServiceException("Impossible de sauvegarder les messages");
+            throw new ServiceException("Unable to save message");
         }
     }
 
