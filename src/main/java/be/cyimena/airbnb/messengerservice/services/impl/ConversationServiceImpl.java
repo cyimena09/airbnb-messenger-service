@@ -45,6 +45,7 @@ public class ConversationServiceImpl implements IConversationService {
      */
     @Override
     public Page<ConversationDto> getConversationsByParticipantId(UUID id, Pageable pageable) {
+        // todo manage no value present
         try {
             return this.conversationRepository.findConversationsByParticipantId(id, pageable).map(conversationMapper::mapToConversationDto);
         } catch (SQLException e) {
