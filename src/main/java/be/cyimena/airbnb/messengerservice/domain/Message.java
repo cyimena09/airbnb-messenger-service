@@ -23,7 +23,10 @@ public class Message implements Serializable {
     @Column(name = "message_id", length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
     private UUID senderId;
+
+    @Column(columnDefinition = "text")
     private String text;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private Timestamp createAt;
