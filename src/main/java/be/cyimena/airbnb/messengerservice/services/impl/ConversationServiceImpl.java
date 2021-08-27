@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements IConversationService {
 
-    private static final String CONVERSATION_ERROR = "Impossible de récupérer la conversation";
+    private static final String CONVERSATION_ERROR = "Unable to retrieve conversation";
     private final ConversationRepository conversationRepository;
     private final IConversationMapper conversationMapper;
 
@@ -32,7 +32,7 @@ public class ConversationServiceImpl implements IConversationService {
         } catch (ConversationNotFoundException e) {
             throw new ServiceException(e.getMessage());
         } catch (ServiceException e) {
-            throw new ServiceException(CONVERSATION_ERROR + " avec l'id " + id);
+            throw new ServiceException(CONVERSATION_ERROR + " with id : " + id);
         }
     }
 

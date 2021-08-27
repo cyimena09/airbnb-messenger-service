@@ -3,7 +3,6 @@ package be.cyimena.airbnb.messengerservice.web.controllers;
 import be.cyimena.airbnb.messengerservice.domain.Notification;
 import be.cyimena.airbnb.messengerservice.domain.NotificationType;
 import be.cyimena.airbnb.messengerservice.enumerations.TypeEnum;
-import be.cyimena.airbnb.messengerservice.services.IConversationService;
 import be.cyimena.airbnb.messengerservice.services.INotificationService;
 import be.cyimena.airbnb.messengerservice.web.models.MessageDto;
 import be.cyimena.airbnb.messengerservice.services.IMessageService;
@@ -11,6 +10,7 @@ import be.cyimena.airbnb.messengerservice.web.models.ParticipationDto;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,6 @@ import java.util.UUID;
 public class MessageController {
 
     private final IMessageService messageService;
-    private final IConversationService conversationService;
     private final INotificationService notificationService;
     private final SimpMessageSendingOperations messagingTemplate;
 
@@ -39,15 +38,14 @@ public class MessageController {
             } else {
                 return new ResponseEntity<>(messages, HttpStatus.OK);
             }
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/messages/by/participations/{id}")
-    public Page<MessageDto> getMessagesByParticipantId(@PathVariable UUID id, Pageable pageable) {
+    public Page<MessageDto> getMessagesByParticipantId(@PathVariable UUID id, Pageable pageable) throws Exception {
         return this.messageService.getMessagesByParticipantId(id, pageable);
-
     }
 
     /**
@@ -58,7 +56,7 @@ public class MessageController {
      * @return page of messageDto
      */
     @PostMapping("/messages/by/participations")
-    public ResponseEntity<Page<MessageDto>> getMessagesByParticipations(@RequestBody Set<ParticipationDto> participations, Pageable pageable) {
+    public ResponseEntity<Page<MessageDto>> getMessagesByParticipations(@RequestBody Set<ParticipationDto> participations, Pageable pageable) throws Exception {
         try {
             return new ResponseEntity<>(this.messageService.getMessagesByParticipations(participations, pageable), HttpStatus.OK);
         } catch (ServiceException e) {

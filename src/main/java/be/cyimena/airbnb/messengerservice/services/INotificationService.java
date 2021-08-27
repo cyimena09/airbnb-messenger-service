@@ -13,7 +13,7 @@ public interface INotificationService {
 
     Notification createNotification(Notification notification) throws ServiceException;
 
-    public void updateNotification(Notification notification) throws ServiceException;
+    public void setIsSeen(UUID userId) throws ServiceException;
 
     public void deleteNotification(UUID notificationId) throws ServiceException;
 

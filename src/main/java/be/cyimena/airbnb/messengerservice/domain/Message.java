@@ -30,9 +30,11 @@ public class Message implements Serializable {
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private Timestamp createAt;
+
     @UpdateTimestamp
     private Timestamp updateAt;
     private boolean swDisplay;
+
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;

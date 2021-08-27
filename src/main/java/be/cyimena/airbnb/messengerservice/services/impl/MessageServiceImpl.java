@@ -52,13 +52,14 @@ public class MessageServiceImpl implements IMessageService {
 
     /**
      * Get message from single participant
+     *
      * @param id
      * @param pageable
      * @return
      */
     @Override
     public Page<MessageDto> getMessagesByParticipantId(UUID id, Pageable pageable) {
-       return null;
+        return null;
     }
 
     @Override
@@ -72,10 +73,10 @@ public class MessageServiceImpl implements IMessageService {
     }
 
     @Override
-    public MessageDto addPrivateMessage(MessageDto messageDto) throws ServiceException {
+    public MessageDto addPrivateMessage(MessageDto messageDto) throws Exception {
         // todo return exception
         if (messageDto == null || messageDto.getConversation() == null || messageDto.getConversation().getParticipations() == null) {
-            return null;
+            throw new Exception();
         }
         // If the conversation is set
         if (messageDto.getConversation().getId() != null && !StringUtils.isBlank(messageDto.getConversation().getId().toString())) {
@@ -101,11 +102,12 @@ public class MessageServiceImpl implements IMessageService {
 
             return savedMessage;
         }
-        return null;
+        throw new Exception();
     }
 
     /**
-     * Returns the conversation in which the users are participating.
+     * If exist, return the conversation in which the users are participating.
+     * Else return null.
      *
      * @param participations participants
      * @return ConversationDto

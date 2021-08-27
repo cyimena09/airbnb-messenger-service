@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // notifications
                 .antMatchers(HttpMethod.GET, "/api/v1/messenger/notifications/by/users/{id}").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/messenger/notifications").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/api/v1/messenger/notifications").permitAll()
                 .anyRequest().authenticated();
     }
 

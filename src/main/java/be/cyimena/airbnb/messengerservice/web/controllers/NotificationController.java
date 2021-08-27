@@ -21,9 +21,10 @@ public class NotificationController {
         return this.notificationService.getNotificationsByUserId(id, pageable);
     }
 
-    @PostMapping("/notifications")
-    public void updateNotification(@RequestBody Notification notification) {
-        this.notificationService.updateNotification(notification);
+    @PatchMapping("/notifications")
+    public void setIsSeen(@RequestBody String strUserId) {
+        UUID userId = UUID.fromString(strUserId);
+        this.notificationService.setIsSeen(userId);
     }
 
     @DeleteMapping("/notifications")

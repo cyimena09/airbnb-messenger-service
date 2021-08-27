@@ -32,16 +32,13 @@ public class NotificationServiceImpl implements INotificationService {
         NotificationType typeFound = this.typeRepository.findByName(typeName);
         notification.setType(typeFound);
         notification.setIsSeen(false);
+        notification.setIsRead(false);
         return this.notificationRepository.save(notification);
     }
 
     @Override
-    public void updateNotification(Notification notification) {
-        this.notificationRepository.notify();
-        notificationRepository.findById(notification.getId()).map(n -> {
-            n.setIsSeen(true);
-            return notificationRepository.save(n);
-        }).orElseThrow(() -> new NotificationNotFoundException(notification.getId()));
+    public void setIsSeen(UUID userId) {
+        this.notificationRepository.setIsSeen(userId);
     }
 
     @Override
